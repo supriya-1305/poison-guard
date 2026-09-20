@@ -16,3 +16,4 @@ mlruns/
 .DS_Store
 
 *.log
+mlflow.db
