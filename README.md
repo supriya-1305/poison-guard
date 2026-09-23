@@ -10,7 +10,7 @@ training-time attacks and develops detection and mitigation techniques.
 
 ## Current Phase
 
-Week 1 - Foundation, Research and Environment Setup
+Week 3 — Data Poisoning Detection and Data Sanitization Engine
 
 ## Planned Components
 
