@@ -1,0 +1,18 @@
+{
+  "data/poisoned/images.npy": {
+    "size_bytes": 153600128,
+    "sha256": "a2cfbbf6f1d86c67356d0e8dbe4c5dcc0013fe002d482b35450e69983f4873c2"
+  },
+  "data/poisoned/labels.npy": {
+    "size_bytes": 400128,
+    "sha256": "b6c656273d37455bf0f8ffe218aabc9423cd2a1595e33f9bdd4c05ad28bc580f"
+  },
+  "data/poisoned/metadata.json": {
+    "size_bytes": 11557688,
+    "sha256": "c6a225807d31b3e0b7b3264219f6fb86a026779e84418e5ee05bbe6bb3fa7e35"
+  },
+  "dataset": "CIFAR-10",
+  "seed": 42,
+  "label_poison_rate": 0.05,
+  "feature_anomaly_rate": 0.02
+}

@@ -17,3 +17,12 @@ mlruns/
 
 *.log
 mlflow.db
+
+# PoisonGuard Week 3 generated data
+data/poisoned/
+data/quarantine/
+
+# Generated experiment output
+experiments/week3/results/
+experiments/week3/figures/
+experiments/week3/logs/
