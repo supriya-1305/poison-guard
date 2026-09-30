@@ -1,0 +1,53 @@
+PoisonGuard - Week 4 Results
+
+Dataset:
+CIFAR-10
+
+Model:
+ResNet18
+
+Backdoor Poison Rate:
+5%
+
+Trigger:
+4x4 white square
+
+Trigger Location:
+Bottom-right corner
+
+Target Class:
+0 - airplane
+
+Clean Accuracy:
+72.54%
+
+Attack Success Rate:
+94.57%
+
+Activation Clustering:
+Completed
+
+Cluster 0:
+4781 samples, 28 backdoor, backdoor rate 0.0059
+
+Cluster 1:
+219 samples, 219 backdoor, backdoor rate 1.0000
+
+STRIP-style Detection:
+Completed
+
+Clean Entropy:
+0.549342
+
+Triggered Entropy:
+0.259480
+
+Backdoor Risk Scoring:
+Completed
+
+Risk Scoring Functional Test:
+Risk = 78.0
+Status = HIGH RISK
+
+Neural Cleanse-style Prototype:
+Completed

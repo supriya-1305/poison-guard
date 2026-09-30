@@ -26,3 +26,9 @@ data/quarantine/
 experiments/week3/results/
 experiments/week3/figures/
 experiments/week3/logs/
+
+data/backdoor/
+data/backdoor_test/
+models/week4/
+experiments/week4/results/
+experiments/week4/logs/
