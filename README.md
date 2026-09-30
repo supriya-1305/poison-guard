@@ -57,43 +57,46 @@ Evaluation
 MLflow Tracking
 
 
-## Week 3 — Data Poisoning Detection and Sanitization
+
+## Week 3 — Data Poisoning Detection and Data Sanitization
 
 A controlled poisoned CIFAR-10 dataset was created to evaluate the PoisonGuard data sanitization engine.
 
 ### Detection Pipeline
 
-<<<<<<< ours
-```text
-Dataset
-   ↓
-Data Scanner
-   ↓
-Duplicate Detection
-   ↓
-Feature Extraction
-   ↓
-Outlier Detection
-   ↓
-Label Consistency
-   ↓
-Clustering
-   ↓
-Risk Scoring
-   ↓
-Quarantine
-   ↓
+Dataset  
+↓  
+Data Scanner  
+↓  
+Duplicate Detection  
+↓  
+Feature Extraction  
+↓  
+Outlier Detection  
+↓  
+Label Consistency  
+↓  
+Clustering  
+↓  
+Risk Scoring  
+↓  
+Quarantine  
+↓  
 Evaluation
-=======
-- Python
-- PyTorch
-- Torchvision
-- Scikit-learn
-- MLflow
-- FastAPI
-- PostgreSQL
-- Docker
-- Git
+
+### Week 3 Implementation
+
+- Controlled CIFAR-10 poisoning experiment
+- Poison metadata and ground truth
+- Data provenance using SHA-256 hashes
+- Duplicate detection
+- ResNet18 feature extraction
+- Isolation Forest outlier detection
+- Label consistency analysis
+- KMeans clustering
+- Multi-signal risk scoring
+- Suspicious sample quarantine
+- Sanitization evaluation
 
 ## Week 4 — Backdoor Detection
 
@@ -104,7 +107,7 @@ A controlled backdoor experiment was implemented using CIFAR-10 and ResNet18.
 - Dataset: CIFAR-10
 - Model: ResNet18
 - Backdoor rate: 5%
-- Trigger: 4×4 white square
+- Trigger: 4x4 white square
 - Trigger location: Bottom-right corner
 - Target class: CIFAR-10 class 0 (airplane)
 
@@ -141,15 +144,14 @@ A controlled backdoor experiment was implemented using CIFAR-10 and ResNet18.
 | Clean | 0.549342 |
 | Triggered | 0.259480 |
 
-The triggered input produced lower prediction entropy than the clean input in this experiment, providing a signal for backdoor analysis.
+The triggered input produced lower prediction entropy than the clean input in this experiment.
 
-### Risk Scoring
+### Backdoor Risk Scoring
 
-The backdoor risk scoring component combines activation and STRIP-related signals into a normalized risk classification.
+The backdoor risk scoring component combines activation and STRIP-related signals.
 
-A functional test using activation score 80 and STRIP score 75 produced:
+A functional test using an activation score of 80 and STRIP score of 75 produced:
 
 ```text
 Risk Score: 78.0
 Status: HIGH RISK
->>>>>>> theirs
