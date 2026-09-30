@@ -10,7 +10,7 @@ The project focuses on protecting ML training pipelines against data poisoning a
 
 ## Current Phase
 
-**Week 3 — Data Poisoning Detection and Data Sanitization Engine**
+**Week 4 — Backdoor Attack Simulation and Detection**
 
 ## Project Progress
 
@@ -55,7 +55,7 @@ ResNet18
 Evaluation
    ↓
 MLflow Tracking
-
+```
 
 
 ## Week 3 — Data Poisoning Detection and Data Sanitization
