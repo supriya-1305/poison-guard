@@ -5,8 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-from torchvision.models import resnet18
-
+from ml.models.resnet18 import create_model
 
 class BackdoorDataset(Dataset):
     def __init__(self):
@@ -30,17 +29,6 @@ class BackdoorDataset(Dataset):
         label = int(self.labels[index])
 
         return image, label
-
-
-def create_model():
-    model = resnet18(weights=None)
-
-    model.fc = nn.Linear(
-        model.fc.in_features,
-        10
-    )
-
-    return model
 
 
 def main():
@@ -118,18 +106,18 @@ def main():
             f"Accuracy: {accuracy:.4f}"
         )
 
-    Path("models/week4").mkdir(
+    Path("models/week5").mkdir(
         parents=True,
         exist_ok=True
     )
 
     torch.save(
         model.state_dict(),
-        "models/week4/backdoored_resnet18.pth"
+        "models/week5/backdoored_resnet18.pth"
     )
 
     print(
-        "Saved: models/week4/backdoored_resnet18.pth"
+         "Saved: models/week5/backdoored_resnet18.pth"
     )
 
 

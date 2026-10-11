@@ -1,0 +1,12 @@
+{
+  "model": "models/week5/backdoored_resnet18.pth",
+  "test_dataset": "CIFAR-10 test split",
+  "test_samples": 10000,
+  "target_label": 0,
+  "clean_correct": 8315,
+  "clean_accuracy": 0.8315,
+  "attack_successes": 8760,
+  "attack_eligible_samples": 9000,
+  "attack_success_rate": 0.9733333333333334,
+  "evaluation_time_seconds": 13.183286958999815
+}
