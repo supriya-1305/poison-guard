@@ -10,6 +10,7 @@ The project focuses on protecting ML training pipelines against data poisoning a
 
 ## Current Phase
 
+
 **Week 5 Completed — Backdoor Attack Evaluation**
 
 ## Project Progress
@@ -155,6 +156,7 @@ A functional test using an activation score of 80 and STRIP score of 75 produced
 ```text
 Risk Score: 78.0
 Status: HIGH RISK
+```
 
 ## Week 5 — Backdoor Model Training and Evaluation
 
