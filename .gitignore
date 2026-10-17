@@ -39,3 +39,7 @@ models/week5/*.pth
 # Temporary backup files
 *.bak
 *.backup
+
+# Week 6 generated runtime logs and test image
+experiments/week6/logs/*.jsonl
+experiments/week6/test_image.png
