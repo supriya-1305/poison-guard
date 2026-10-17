@@ -221,3 +221,78 @@ mitigation effectiveness.
 - Evaluation script: `ml/evaluation/evaluate_backdoor.py`
 - Evaluation results: `experiments/week5/evaluation_results.json`
 - Experiment report: `experiments/week5/README.md`
+
+## Week 6 — ML Security Analysis and Runtime Monitoring
+
+### Objective
+
+Extend PoisonGuard from offline model evaluation to a prototype inference API that records predictions and monitors runtime behaviour.
+
+### Implementation
+
+- Integrated a FastAPI inference service with the Week 5 ResNet18 model checkpoint.
+- Added image preprocessing and CIFAR-10 classification through the API.
+- Recorded prediction timestamps, predicted classes, confidence scores, input means, input standard deviations, and model versions.
+- Implemented runtime alert rules for low-confidence predictions and unusual input statistics.
+- Added monitoring for unusual target-class concentration in recent predictions.
+- Implemented incident-recording logic and a preliminary security-score endpoint.
+- Added model status and checkpoint-scanning endpoints.
+
+### API Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | Check API and model status |
+| POST | `/predict` | Run model inference |
+| POST | `/scan/dataset` | Request dataset scanning |
+| POST | `/scan/model` | Request model scanning |
+| GET | `/model/status` | Inspect model status |
+| GET | `/security-score` | Retrieve the preliminary security score |
+| GET | `/incidents` | Retrieve recorded incidents |
+| POST | `/rollback` | Request model rollback |
+| POST | `/retrain` | Request model retraining |
+
+### Runtime Monitoring and Logging
+
+Prediction records are stored locally in:
+
+- `experiments/week6/logs/predictions.jsonl`
+- `experiments/week6/logs/incidents.jsonl` — created when an incident is recorded.
+
+Prediction records include timestamps, predicted classes, confidence values, input statistics, and model-version information. Runtime alert thresholds are configurable demonstration values and require validation against clean validation data before operational use.
+
+### Testing Results
+
+The following automated tests passed:
+
+| Test | Result |
+|---|---|
+| Duplicate detection | Passed |
+| Feature extraction | Passed |
+| Prediction-record generation | Passed |
+| Security-score response fields | Passed |
+| Incident-list response | Passed |
+| Week 6 runtime alert rules | Passed |
+| **Total** | **6 passed** |
+
+Test command:
+
+```bash
+python -m pytest tests/ -v
+```
+
+The recorded test run completed with **6 passed**. These tests validate the implemented prototype behaviour; they do not establish production-level security or prove that every API endpoint and attack scenario has been fully validated.
+
+### Artifacts
+
+- Runtime monitoring service: `backend/app/services/runtime_monitor.py`
+- Runtime alert tests: `tests/test_week6_alerts.py`
+- Test results: `experiments/week6/pytest-results.txt`
+- Runtime monitoring documentation: `experiments/week6/README.md`
+
+### Limitations
+
+The current monitoring rules use confidence and image-statistic heuristics. These signals can produce false positives and false negatives and do not independently prove that a model has been backdoored. Further work is required to validate thresholds, test adversarial scenarios, and evaluate mitigation effectiveness.
+
+</EOF>
+
