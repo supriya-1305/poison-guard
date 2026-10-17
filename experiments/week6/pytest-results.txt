@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.12, pytest-9.1.1, pluggy-1.6.0 -- /Users/suprii/poison-guard/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/suprii/poison-guard
+plugins: anyio-4.15.1
+collecting ... collected 6 items
+
+tests/test_duplicate_detector.py::test_duplicate_detection PASSED        [ 16%]
+tests/test_feature_extractor.py::test_feature_extraction PASSED          [ 33%]
+tests/test_runtime_monitor.py::test_monitor_returns_prediction_record PASSED [ 50%]
+tests/test_runtime_monitor.py::test_security_score_has_expected_fields PASSED [ 66%]
+tests/test_runtime_monitor.py::test_incidents_are_a_list PASSED          [ 83%]
+tests/test_week6_alerts.py::test_week6_runtime_alert_rules PASSED        [100%]
+
+============================== 6 passed in 11.14s ==============================

@@ -11,7 +11,7 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 5 Completed — Backdoor Attack Evaluation**
+**Week 6 Completed — ML Security Analysis and Optimization**
 
 ## Project Progress
 
@@ -22,8 +22,8 @@ The project focuses on protecting ML training pipelines against data poisoning a
 | Week 3 | Data Poisoning Detection and Sanitization | Completed |
 | Week 4 | Backdoor Attack Simulation and Detection | Completed |
 | Week 5 | Backdoor Model Training and Evaluation | Completed |
-| Week 6 | ML Security Analysis and Optimization | Next |
-| Week 7 | Backend/API Integration | Planned |
+| Week 6 | ML Security Analysis and Optimization | Completed |
+| Week 7 | Backend/API Integration | Next |
 | Week 8 | Security Dashboard | Planned |
 | Week 9 | End-to-End Testing | Planned |
 | Week 10 | Documentation and Final Demo | Planned |
