@@ -1,0 +1,12 @@
+{
+  "candidate": "models/week7/resnet18_sanitized_candidate.pth",
+  "initialized_from": "models/resnet18_baseline.pth",
+  "training_dataset": "CIFAR-10 training split",
+  "retained_sample_count": 46863,
+  "risk_threshold": 40.0,
+  "epochs": 3,
+  "learning_rate": 0.0001,
+  "seed": 42,
+  "status": "candidate_not_yet_validated",
+  "note": "This experiment starts from the baseline checkpoint. It is not evidence of backdoor removal. Evaluate clean accuracy and attack success rate before any promotion."
+}

@@ -11,6 +11,10 @@ from torchvision import transforms
 from ml.models.resnet18 import create_model
 from backend.app.services import runtime_monitor
 
+from backend.app.services.week7_orchestrator import (
+    process_runtime_alerts,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 CHECKPOINT = ROOT / "models" / "week5" / "backdoored_resnet18.pth"
 
@@ -48,9 +52,10 @@ model = None
 model_error = None
 model_version = "unavailable"
 
+active_checkpoint = CHECKPOINT
 
 def load_model():
-    global model, model_error, model_version
+    global model, model_error, model_version, active_checkpoint
 
     if not CHECKPOINT.exists():
         model_error = f"Checkpoint not found: {CHECKPOINT}"
@@ -70,6 +75,7 @@ def load_model():
         digest = hashlib.sha256(CHECKPOINT.read_bytes()).hexdigest()[:12]
 
         model = candidate
+        active_checkpoint = CHECKPOINT
         model_version = f"week5-{digest}"
         model_error = None
     except Exception as exc:
@@ -113,6 +119,11 @@ def run_prediction(image: Image.Image) -> dict:
         input_std=input_std,
         model_version=model_version,
     )
+   
+    week7_incidents = process_runtime_alerts(
+        alerts=monitoring["alerts"],
+        model_version=model_version,
+    )
 
     return {
         "prediction": predicted,
@@ -127,6 +138,7 @@ def run_prediction(image: Image.Image) -> dict:
         "monitoring": {
             "alert_count": monitoring["alert_count"],
             "alerts": monitoring["alerts"],
+            "week7_incidents": week7_incidents,
         },
     }
 
@@ -222,7 +234,7 @@ async def scan_dataset(files: list[UploadFile] = File(...)):
 def scan_model():
     load_model()
     return {
-        "checkpoint": str(CHECKPOINT.relative_to(ROOT)),
+        "checkpoint": str(active_checkpoint.relative_to(ROOT)),
         "checkpoint_exists": CHECKPOINT.exists(),
         "model_loaded": model is not None,
         "model_version": model_version,
@@ -236,7 +248,7 @@ def model_status():
     return {
         "model_loaded": model is not None,
         "model_version": model_version,
-        "checkpoint": str(CHECKPOINT.relative_to(ROOT)),
+        "checkpoint": str(active_checkpoint.relative_to(ROOT)),
         "device": str(device),
         "error": model_error,
     }
@@ -257,13 +269,83 @@ def incidents():
 
 @app.post("/rollback")
 def rollback():
-    raise HTTPException(
-        status_code=501,
-        detail=(
-            "Rollback is not implemented in Week 6. "
-            "A verified previous model and approval workflow are required."
-        ),
+    """Safely switch to the validated baseline checkpoint."""
+    global model, model_error, model_version, active_checkpoint   
+ 
+    from backend.app.services.incident_response import (
+        list_incidents,
+        record_response_action,
     )
+
+    baseline = ROOT / "models" / "resnet18_baseline.pth"
+
+    if not baseline.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Baseline checkpoint not found: {baseline}",
+        )
+
+    try:
+        candidate = create_model(num_classes=10)
+        state = torch.load(
+            baseline,
+            map_location="cpu",
+            weights_only=True,
+        )
+        candidate.load_state_dict(state)
+        candidate.to(device)
+        candidate.eval()
+        digest = hashlib.sha256(baseline.read_bytes()).hexdigest()[:12]
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Rollback validation failed; active model unchanged: {exc}",
+        ) from exc
+
+    previous_version = model_version
+    previous_checkpoint = active_checkpoint
+    new_version = f"rollback-baseline-{digest}"
+   
+ 
+    # Switch only after the candidate has loaded successfully.
+    model = candidate
+    active_checkpoint = baseline
+    model_version = new_version
+    model_error = None
+
+    incidents = list_incidents(limit=100)
+    active_incident = next(
+        (item for item in reversed(incidents)
+         if item.get("status") == "OPEN"),
+        None,
+    )
+    incident_id = (
+        active_incident["incident_id"]
+        if active_incident
+        else "manual-rollback"
+    )
+
+    record_response_action(
+        incident_id=incident_id,
+        action="ROLLBACK_COMPLETED",
+        details={
+                "previous_model_version": previous_version,
+                "previous_checkpoint": str(previous_checkpoint.relative_to(ROOT)),
+                "active_model_version": new_version,
+                "checkpoint": str(baseline.relative_to(ROOT)),
+                "checkpoint_sha256_prefix": digest,
+                "reason": "Validated baseline rollback",
+        },
+    )
+
+    return {
+        "success": True,
+        "message": "Baseline model loaded and activated.",
+        "previous_model_version": previous_version,
+        "active_model_version": new_version,
+        "checkpoint": str(baseline.relative_to(ROOT)),
+        "incident_id": incident_id,
+    }
 
 
 @app.post("/retrain")
@@ -276,3 +358,47 @@ def retrain():
             "automatically from runtime alerts."
         ),
     )
+
+
+@app.get("/registry/versions")
+def registry_versions():
+    """List model versions registered in MLflow."""
+    from backend.app.services.model_registry import (
+        list_registered_versions,
+    )
+
+    versions = list_registered_versions()
+    return {
+        "model_name": "PoisonGuard-ResNet18",
+        "count": len(versions),
+        "versions": versions,
+    }
+
+
+@app.get("/week7/incidents")
+def week7_incidents():
+    """List Week 7 incident records."""
+    from backend.app.services.incident_response import (
+        list_incidents,
+    )
+
+    records = list_incidents(limit=100)
+    return {
+        "count": len(records),
+        "incidents": records,
+    }
+
+
+@app.get("/week7/audit")
+def week7_audit():
+    """List Week 7 incident-response audit events."""
+    from backend.app.services.incident_response import (
+        list_response_audit,
+    )
+
+    records = list_response_audit(limit=100)
+    return {
+        "count": len(records),
+        "events": records,
+    }
+

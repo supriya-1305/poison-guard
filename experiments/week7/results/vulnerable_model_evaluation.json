@@ -1,0 +1,14 @@
+{
+  "model": "models/week5/backdoored_resnet18.pth",
+  "dataset": "CIFAR-10 test split",
+  "preprocessing": "ToTensor plus CIFAR-10 normalization",
+  "trigger": "4x4 white square, bottom-right",
+  "test_samples": 10000,
+  "clean_correct": 4788,
+  "clean_accuracy": 0.4788,
+  "attack_successes": 8952,
+  "attack_eligible_samples": 9000,
+  "attack_success_rate": 0.9946666666666667,
+  "evaluation_time_seconds": 13.502054458000202,
+  "status": "evaluated_not_yet_approved"
+}

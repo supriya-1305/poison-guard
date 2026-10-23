@@ -1,0 +1,13 @@
+{
+  "model": "models/week7/resnet18_sanitized_candidate.pth",
+  "dataset": "CIFAR-10 test split",
+  "test_samples": 10000,
+  "target_label": 0,
+  "clean_correct": 9033,
+  "clean_accuracy": 0.9033,
+  "attack_successes": 100,
+  "attack_eligible_samples": 9000,
+  "attack_success_rate": 0.011111111111111112,
+  "evaluation_time_seconds": 13.498028916001203,
+  "status": "evaluated_not_yet_approved"
+}

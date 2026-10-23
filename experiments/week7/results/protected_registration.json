@@ -1,0 +1,14 @@
+{
+  "registration": {
+    "registered": true,
+    "created": false,
+    "model_name": "PoisonGuard-ResNet18",
+    "version": 3,
+    "label": "v3-sanitized",
+    "validation_status": "evaluation_passed_pending_review",
+    "checkpoint_sha256": "b863e532b0e2e1a1a0e95b439ca4a7a2f4ee8f036809ba4d4c34b30e129ebed8"
+  },
+  "promotion_status": "not_promoted",
+  "active_model_changed": false,
+  "note": "Registered for tracking only. Registration does not approve or activate the model."
+}
