@@ -11,7 +11,9 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 7 Completed — Backend/API Integration**
+**Week 7 Prototype Implemented — Backend/API Integration**
+
+The core Week 7 tests pass. Automated retraining and protected-model promotion/activation remain outstanding.
 
 ## Project Progress
 
@@ -250,7 +252,7 @@ Extend PoisonGuard from offline model evaluation to a prototype inference API th
 | GET | `/security-score` | Retrieve the preliminary security score |
 | GET | `/incidents` | Retrieve recorded incidents |
 | POST | `/rollback` | Request model rollback |
-| POST | `/retrain` | Request model retraining |
+| POST | `/retrain` | Currently unimplemented; returns HTTP 501 |
 
 ### Runtime Monitoring and Logging
 
