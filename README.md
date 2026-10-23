@@ -11,7 +11,7 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 6 Completed — ML Security Analysis and Optimization**
+**Week 7 Completed — Backend/API Integration**
 
 ## Project Progress
 
@@ -23,8 +23,8 @@ The project focuses on protecting ML training pipelines against data poisoning a
 | Week 4 | Backdoor Attack Simulation and Detection | Completed |
 | Week 5 | Backdoor Model Training and Evaluation | Completed |
 | Week 6 | ML Security Analysis and Optimization | Completed |
-| Week 7 | Backend/API Integration | Next |
-| Week 8 | Security Dashboard | Planned |
+| Week 7 | Backend/API Integration | Completed |
+| Week 8 | Security Dashboard | Next |
 | Week 9 | End-to-End Testing | Planned |
 | Week 10 | Documentation and Final Demo | Planned |
 
@@ -295,4 +295,88 @@ The recorded test run completed with **6 passed**. These tests validate the impl
 The current monitoring rules use confidence and image-statistic heuristics. These signals can produce false positives and false negatives and do not independently prove that a model has been backdoored. Further work is required to validate thresholds, test adversarial scenarios, and evaluate mitigation effectiveness.
 
 </EOF>
+
+## Week 7 — Runtime Protection and Model Validation
+
+### Objective
+
+Extend PoisonGuard with model sanitization, backdoor evaluation, incident response, audit logging, and model registry validation to support a safer machine-learning model lifecycle.
+
+### Implementation
+
+- Implemented a Week 7 model sanitization workflow and trained a sanitized candidate model.
+- Evaluated clean classification accuracy and attack success rate using the CIFAR-10 test split.
+- Added configurable promotion validation checks to assess whether a candidate meets the configured thresholds.
+- Integrated model registry tracking for baseline, vulnerable, and sanitized model versions.
+- Implemented incident recording, model-version quarantine support, and response audit logging.
+- Added runtime alert orchestration and automated tests for incident response and promotion validation.
+
+### Candidate Evaluation Results
+
+| Metric | Result |
+|---|---:|
+| Dataset | CIFAR-10 test split |
+| Test samples | 10,000 |
+| Trigger | 4×4 white square, bottom-right |
+| Target class | 0 — airplane |
+| Clean accuracy | 90.33% |
+| Attack success rate | 1.11% |
+| Configured validation checks | 7/7 passed |
+| Promotion status | Not promoted |
+
+**Important:** Passing the configured checks does not prove that every possible backdoor has been eliminated. Additional testing and review are required before operational use.
+
+### Model Registry
+
+| Version | Model | Status |
+|---|---|---|
+| v1 | Baseline | Baseline evaluated |
+| v2 | Vulnerable model | Quarantined; promotion blocked |
+| v3 | Sanitized candidate | Registered for tracking; not promoted |
+
+The sanitized candidate is registered for tracking only. Registration does not activate the model or authorize production deployment.
+
+### API and Incident Response
+
+Week 7 extends the Week 6 inference and monitoring prototype with incident-response services, audit records, model registry inspection, and a candidate validation workflow.
+
+The existing rollback endpoint supports loading the baseline checkpoint. The retraining endpoint remains unimplemented and returns HTTP 501.
+
+### Testing
+
+The automated test suite completed successfully:
+
+```bash
+python -m pytest tests/ -q
+```
+
+**Latest recorded result:** 15 tests passed.
+
+Tests cover runtime monitoring, incident persistence, response-action auditing, orchestration, and promotion validation.
+
+### Artifacts
+
+- Sanitization workflow: `ml/detection/week7_sanitization.py`
+- Candidate training: `ml/training/week7_sanitize_model.py`
+- Candidate evaluation: `ml/evaluation/evaluate_week7_candidate.py`
+- Vulnerable-model evaluation: `ml/evaluation/evaluate_week7_vulnerable.py`
+- Promotion validation: `ml/evaluation/validate_week7_promotion.py`
+- Registry tracking: `ml/evaluation/register_week7_protected.py`
+- Incident response: `backend/app/services/incident_response.py`
+- Runtime orchestration: `backend/app/services/week7_orchestrator.py`
+- Validation report: `experiments/week7/results/promotion_validation.json`
+- Candidate evaluation: `experiments/week7/results/sanitized_candidate_evaluation.json`
+- Vulnerable-model evaluation: `experiments/week7/results/vulnerable_model_evaluation.json`
+- Sanitization manifest: `experiments/week7/results/sanitization_manifest.json`
+
+### Limitations and Remaining Work
+
+- The evaluation covers the configured CIFAR-10 test split and a single trigger configuration.
+- The validation results do not establish protection against all poisoning or backdoor attacks.
+- Retraining and complete protected-model promotion and activation remain outstanding.
+- Manual approval is separate from registration and production deployment.
+
+### Conclusion
+
+Week 7 establishes a tested prototype for model validation, registry tracking, and incident response. Further work is required to complete the end-to-end protected-model lifecycle and verify its effectiveness under additional attack scenarios.
 
