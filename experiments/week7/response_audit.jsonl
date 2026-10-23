@@ -1,0 +1,3 @@
+{"timestamp": "2026-10-22T13:58:02.269684+00:00", "incident_id": "85780a85-a590-484a-b84e-8e075a57a543", "action": "INCIDENT_CREATED", "model_version": "2", "severity": "CRITICAL"}
+{"timestamp": "2026-10-22T13:58:14.222588+00:00", "incident_id": "85780a85-a590-484a-b84e-8e075a57a543", "action": "MODEL_VERSION_QUARANTINED", "model_name": "PoisonGuard-ResNet18", "model_version": "2"}
+{"timestamp": "2026-10-22T14:53:55.916537+00:00", "incident_id": "85780a85-a590-484a-b84e-8e075a57a543", "action": "ROLLBACK_COMPLETED", "details": {"previous_model_version": "week5-a4760a43ab61", "active_model_version": "rollback-baseline-7ad99dd388c4", "checkpoint": "models/resnet18_baseline.pth", "checkpoint_sha256_prefix": "7ad99dd388c4", "reason": "Validated baseline rollback"}}

@@ -1,0 +1,14 @@
+PoisonGuard Week 7 — Sanitization Evaluation
+Risk threshold: 40.0
+Total samples: 50000
+Retained: 46863
+Quarantined: 3137
+TP: 1706
+FP: 1431
+FN: 1794
+TN: 45069
+Precision: 0.5438
+Recall: 0.4874
+
+Ground truth is used only for retrospective evaluation.
+This result does not prove backdoor removal.

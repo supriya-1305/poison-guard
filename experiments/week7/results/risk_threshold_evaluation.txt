@@ -1,0 +1,8 @@
+PoisonGuard Week 7 - Risk Threshold Evaluation
+Ground truth: existing dataset metadata
+
+Threshold: 30 | TP: 2571 | FP: 5147 | FN: 929 | TN: 41353 | Precision: 0.3331 | Recall: 0.7346 | FPR: 0.1107
+Threshold: 40 | TP: 1706 | FP: 1431 | FN: 1794 | TN: 45069 | Precision: 0.5438 | Recall: 0.4874 | FPR: 0.0308
+Threshold: 50 | TP: 412 | FP: 353 | FN: 3088 | TN: 46147 | Precision: 0.5386 | Recall: 0.1177 | FPR: 0.0076
+Threshold: 60 | TP: 79 | FP: 5 | FN: 3421 | TN: 46495 | Precision: 0.9405 | Recall: 0.0226 | FPR: 0.0001
+Threshold: 70 | TP: 53 | FP: 1 | FN: 3447 | TN: 46499 | Precision: 0.9815 | Recall: 0.0151 | FPR: 0.0000

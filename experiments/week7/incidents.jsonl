@@ -1,0 +1,1 @@
+{"incident_id": "85780a85-a590-484a-b84e-8e075a57a543", "timestamp": "2026-10-22T13:58:02.269684+00:00", "severity": "CRITICAL", "alert_type": "BACKDOOR_RISK", "message": "Week 7 controlled incident-response test", "model_version": "2", "risk_score": 97.33, "status": "OPEN", "response_actions": []}
