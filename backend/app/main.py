@@ -1,4 +1,8 @@
+import subprocess
+import sys
+import uuid
 import hashlib
+import json
 import io
 from pathlib import Path
 
@@ -53,6 +57,9 @@ model_error = None
 model_version = "unavailable"
 
 active_checkpoint = CHECKPOINT
+
+# Week 7 retraining job tracker
+_retrain_jobs = {}
 
 def load_model():
     global model, model_error, model_version, active_checkpoint
@@ -348,16 +355,157 @@ def rollback():
     }
 
 
+
 @app.post("/retrain")
 def retrain():
-    raise HTTPException(
-        status_code=501,
-        detail=(
-            "Retraining is not implemented in Week 6. "
-            "Use a separate validated training workflow; do not retrain "
-            "automatically from runtime alerts."
-        ),
+    """Start a separate training job; never activate its candidate automatically."""
+    running = [
+        job_id for job_id, job in _retrain_jobs.items()
+        if job["process"].poll() is None
+    ]
+    if running:
+        raise HTTPException(status_code=409, detail="A retraining job is already running.")
+
+    job_id = uuid.uuid4().hex
+    job_dir = ROOT / "experiments" / "week7" / "retraining_jobs" / job_id
+    output_path = ROOT / "models" / "week7" / "retraining_jobs" / job_id / "candidate.pth"
+    report_path = job_dir / "training_report.json"
+    log_path = job_dir / "training.log"
+    job_dir.mkdir(parents=True, exist_ok=False)
+
+    command = [
+        sys.executable,
+        "-m",
+        "ml.training.week7_sanitize_model",
+        "--output", str(output_path),
+        "--report", str(report_path),
+    ]
+
+    try:
+        with log_path.open("w") as log:
+            process = subprocess.Popen(
+                command, cwd=str(ROOT), stdout=log,
+                stderr=subprocess.STDOUT,
+            )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500, detail=f"Could not start retraining: {exc}"
+        ) from exc
+
+    _retrain_jobs[job_id] = {
+        "process": process,
+        "output": str(output_path.relative_to(ROOT)),
+        "report": str(report_path.relative_to(ROOT)),
+        "log": str(log_path.relative_to(ROOT)),
+    }
+    return {
+        "job_id": job_id,
+        "status": "running",
+        "status_url": f"/retrain/{job_id}",
+        "active_model_changed": False,
+    }
+
+
+@app.get("/retrain/{job_id}")
+def retrain_status(job_id: str):
+    """Return the status of a retraining job in this API process."""
+    job = _retrain_jobs.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Retraining job not found.")
+
+    code = job["process"].poll()
+    if code is None:
+        status = "running"
+    elif code != 0:
+        status = "failed"
+    elif (ROOT / job["output"]).is_file() and (ROOT / job["report"]).is_file():
+        status = "completed_candidate_needs_evaluation"
+    else:
+        status = "failed_missing_output"
+
+    return {
+        "job_id": job_id,
+        "status": status,
+        "return_code": code,
+        "candidate": job["output"],
+        "report": job["report"],
+        "log": job["log"],
+        "active_model_changed": False,
+    }
+
+
+@app.post("/models/promote")
+def promote_model(payload: dict):
+    global model, model_error, model_version, active_checkpoint
+
+    job_id = payload.get("job_id")
+    if not isinstance(job_id, str) or not job_id or any(
+        c not in "0123456789abcdef" for c in job_id
+    ):
+        raise HTTPException(400, "A valid retraining job_id is required.")
+
+    candidate_path = (
+        ROOT / "models" / "week7" / "retraining_jobs"
+        / job_id / "candidate.pth"
     )
+    validation_path = (
+        ROOT / "experiments" / "week7" / "results"
+        / f"retrained_{job_id}_promotion_validation.json"
+    )
+    approval_path = (
+        ROOT / "experiments" / "week7" / "approvals"
+        / f"{job_id}.json"
+    )
+
+    if payload.get("activation_authorized") is not True:
+        raise HTTPException(403, "Explicit activation authorization required.")
+
+    if not all(p.is_file() for p in (
+        candidate_path, validation_path, approval_path
+    )):
+        raise HTTPException(
+            400, "Candidate, candidate-specific validation, or approval file missing."
+        )
+
+    validation = json.loads(validation_path.read_text(encoding="utf-8"))
+    approval = json.loads(approval_path.read_text(encoding="utf-8"))
+    digest = hashlib.sha256(candidate_path.read_bytes()).hexdigest()
+
+    if validation.get("validation_status") != "passed_pending_manual_review":
+        raise HTTPException(400, "Candidate validation has not passed.")
+
+    if validation.get("candidate_model") != str(
+        candidate_path.relative_to(ROOT)
+    ):
+        raise HTTPException(400, "Validation report does not match candidate.")
+
+    if approval.get("activation_authorized") is not True:
+        raise HTTPException(403, "Matching approval does not authorize activation.")
+
+    if approval.get("candidate_sha256") != digest:
+        raise HTTPException(400, "Candidate hash does not match approval.")
+
+    try:
+        new_model = create_model(num_classes=10)
+        state = torch.load(candidate_path, map_location="cpu", weights_only=True)
+        new_model.load_state_dict(state)
+        new_model.to(device)
+        new_model.eval()
+    except Exception as exc:
+        raise HTTPException(400, f"Candidate could not be loaded: {exc}") from exc
+
+    previous_version = model_version
+    model = new_model
+    model_error = None
+    active_checkpoint = candidate_path
+    model_version = digest[:12]
+
+    return {
+        "success": True,
+        "previous_model_version": previous_version,
+        "active_model_version": model_version,
+        "active_model_changed": True,
+    }
 
 
 @app.get("/registry/versions")

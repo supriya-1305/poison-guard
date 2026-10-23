@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 
@@ -23,8 +24,14 @@ def load_json(path):
 
 
 def main():
-    vulnerable = load_json(VULNERABLE_FILE)
-    candidate = load_json(CANDIDATE_FILE)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidate-report", type=Path, default=CANDIDATE_FILE)
+    parser.add_argument("--vulnerable-report", type=Path, default=VULNERABLE_FILE)
+    parser.add_argument("--output", type=Path, default=OUTPUT_FILE)
+    args = parser.parse_args()
+
+    vulnerable = load_json(args.vulnerable_report)
+    candidate = load_json(args.candidate_report)
 
     checks = {
         "candidate_evaluation_completed": (
@@ -99,8 +106,8 @@ def main():
         ],
     }
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_FILE.write_text(
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(
         json.dumps(report, indent=2),
         encoding="utf-8",
     )
@@ -115,7 +122,7 @@ def main():
     )
     print("Validation status:", report["validation_status"])
     print("Promotion status:", report["promotion_status"])
-    print("Report saved to:", OUTPUT_FILE)
+    print("Report saved to:", args.output)
 
 
 if __name__ == "__main__":

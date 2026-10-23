@@ -1,4 +1,5 @@
 
+import argparse
 import json
 import time
 from pathlib import Path
@@ -38,8 +39,16 @@ def add_trigger(images):
     return images
 
 def main():
-    if not MODEL_PATH.is_file():
-        raise FileNotFoundError(MODEL_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=Path, default=MODEL_PATH)
+    parser.add_argument("--output", type=Path, default=OUTPUT_PATH)
+    args = parser.parse_args()
+
+    model_path = args.model
+    output_path = args.output
+
+    if not model_path.is_file():
+        raise FileNotFoundError(model_path)
 
     device = torch.device(
         "mps" if torch.backends.mps.is_available()
@@ -68,7 +77,7 @@ def main():
 
     model = create_model().to(device)
     state = torch.load(
-        MODEL_PATH,
+        model_path,
         map_location="cpu",
         weights_only=True,
     )
@@ -109,7 +118,7 @@ def main():
     elapsed = time.perf_counter() - start
 
     results = {
-        "model": str(MODEL_PATH),
+        "model": str(model_path),
         "dataset": "CIFAR-10 test split",
         "test_samples": total,
         "target_label": TARGET_LABEL,
@@ -125,8 +134,8 @@ def main():
         "status": "evaluated_not_yet_approved",
     }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(results, indent=2))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(results, indent=2))
 
     print("\n===== WEEK 7 CANDIDATE EVALUATION =====")
     print(f"Clean accuracy: {results['clean_accuracy']:.2%}")
@@ -139,7 +148,7 @@ def main():
         f"{attack_successes}/{attack_total}"
     )
     print("Evaluation time:", round(elapsed, 2), "seconds")
-    print("Results saved to:", OUTPUT_PATH)
+    print("Results saved to:", output_path)
     print("Status: evaluated_not_yet_approved")
 
 

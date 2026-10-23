@@ -21,8 +21,12 @@ BASELINE_PATH = Path("models/resnet18_baseline.pth")
 MANIFEST_PATH = Path(
     "experiments/week7/results/sanitization_manifest.json"
 )
-OUTPUT_PATH = Path("models/week7/resnet18_sanitized_candidate.pth")
-REPORT_PATH = Path(
+import argparse
+
+DEFAULT_OUTPUT_PATH = Path(
+    "models/week7/resnet18_sanitized_candidate.pth"
+)
+DEFAULT_REPORT_PATH = Path(
     "experiments/week7/results/sanitized_candidate_training.json"
 )
 
@@ -43,9 +47,26 @@ class RetainedCIFAR10(Dataset):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT_PATH,
+    )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=DEFAULT_REPORT_PATH,
+    )
+    args = parser.parse_args()
+
+    output_path = args.output
+    report_path = args.report
+
     random.seed(SEED)
     np.random.seed(SEED)
     torch.manual_seed(SEED)
+
 
     device = torch.device(
         "mps" if torch.backends.mps.is_available() else "cpu"
@@ -127,11 +148,11 @@ def main():
             f"loss={total_loss / total:.4f}"
         )
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(model.cpu().state_dict(), OUTPUT_PATH)
+    output_path.parent.mkdir(parents=True, exist_ok=False)
+    torch.save(model.cpu().state_dict(), output_path)
 
     report = {
-        "candidate": str(OUTPUT_PATH),
+        "candidate": str(output_path),
         "initialized_from": str(BASELINE_PATH),
         "training_dataset": "CIFAR-10 training split",
         "retained_sample_count": len(retained),
@@ -147,9 +168,10 @@ def main():
         ),
     }
 
-    REPORT_PATH.write_text(json.dumps(report, indent=2))
-    print("Candidate checkpoint saved:", OUTPUT_PATH)
-    print("Training report saved:", REPORT_PATH)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(report, indent=2))
+    print("Candidate checkpoint saved:", output_path)
+    print("Training report saved:", report_path)
     print("Status: candidate_not_yet_validated")
 
 

@@ -1,0 +1,13 @@
+{
+  "project": "PoisonGuard",
+  "job_id": "909acef04c0842aab210a000ae8d3c8d",
+  "candidate_path": "models/week7/retraining_jobs/909acef04c0842aab210a000ae8d3c8d/candidate.pth",
+  "candidate_sha256": "059424e9e083df7c1394d883ef8d743f9135e1c50559b24a510fda8fefc4a847",
+  "validation_report": "experiments/week7/results/retrained_909acef04c0842aab210a000ae8d3c8d_promotion_validation.json",
+  "validation_status": "passed_pending_manual_review",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "review_status": "pending_manual_review",
+  "activation_authorized": false,
+  "note": "Review request only. Activation requires explicit reviewer approval."
+}

@@ -1,0 +1,13 @@
+{
+  "model": "models/week7/retraining_jobs/909acef04c0842aab210a000ae8d3c8d/candidate.pth",
+  "dataset": "CIFAR-10 test split",
+  "test_samples": 10000,
+  "target_label": 0,
+  "clean_correct": 9033,
+  "clean_accuracy": 0.9033,
+  "attack_successes": 100,
+  "attack_eligible_samples": 9000,
+  "attack_success_rate": 0.011111111111111112,
+  "evaluation_time_seconds": 13.394212834005884,
+  "status": "evaluated_not_yet_approved"
+}
