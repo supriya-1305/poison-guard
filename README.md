@@ -11,9 +11,9 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 7 Prototype Implemented — Backend/API Integration**
+**Week 8 Completed — Security Dashboard and Dataset Scan History**
 
-The core Week 7 tests pass. Automated retraining and protected-model promotion/activation remain outstanding.
+The dashboard integrates backend health, model status, runtime monitoring, incidents, registry versions, audit events, and saved dataset scan history. The existing automated test suite passes (15 tests). Model activation remains subject to manual authorization.
 
 ## Project Progress
 
@@ -26,7 +26,7 @@ The core Week 7 tests pass. Automated retraining and protected-model promotion/a
 | Week 5 | Backdoor Model Training and Evaluation | Completed |
 | Week 6 | ML Security Analysis and Optimization | Completed |
 | Week 7 | Backend/API Integration | Completed |
-| Week 8 | Security Dashboard | Next |
+| Week 8 | Security Dashboard and API Integration | Completed |
 | Week 9 | End-to-End Testing | Planned |
 | Week 10 | Documentation and Final Demo | Planned |
 
@@ -382,3 +382,32 @@ Tests cover runtime monitoring, incident persistence, response-action auditing, 
 
 Week 7 establishes a tested prototype for model validation, registry tracking, and incident response. Further work is required to complete the end-to-end protected-model lifecycle and verify its effectiveness under additional attack scenarios.
 
+
+
+## Week 8 — Security Dashboard and API Integration
+
+### Objective
+
+Integrate the PoisonGuard security dashboard with the existing backend API and display persisted dataset scan history without fabricating historical results.
+
+### Implementation
+
+- Connected dashboard sections to backend health, model status, security score, runtime incidents, model registry, and audit endpoints.
+- Added a dataset scan-history API endpoint.
+- Persisted dataset scan records in `data/dataset_scan_history.json`, retaining up to 100 records.
+- Displayed saved scan counts, image counts, error counts, and scan results in the Dataset Security section.
+- Configured the dashboard API default to use `http://127.0.0.1:2222`.
+
+### Verification
+
+- Confirmed the dataset scan-history endpoint returned HTTP 200.
+- Submitted a test image and confirmed the scan record appeared in saved history and the dashboard.
+- Ran `python -m pytest tests/ -q`: 15 tests passed.
+
+### Limitations and Safeguards
+
+- Dataset inference results do not by themselves prove that an image is poisoned.
+- Runtime charts show returned aggregate counts, not fabricated time-series history.
+- The rule-based security score is preliminary and is not a validated security rating.
+- Candidate validation does not authorize model activation. Manual authorization and candidate-specific checks remain required.
+- Automated retraining and protected-model promotion/activation remain outside this Week 8 scope.

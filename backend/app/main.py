@@ -4,6 +4,7 @@ import uuid
 import hashlib
 import json
 import io
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -21,6 +22,9 @@ from backend.app.services.week7_orchestrator import (
 
 ROOT = Path(__file__).resolve().parents[2]
 CHECKPOINT = ROOT / "models" / "week5" / "backdoored_resnet18.pth"
+
+DATASET_SCAN_HISTORY = ROOT / "data" / "dataset_scan_history.json"
+MAX_SAVED_DATASET_SCANS = 100
 
 app = FastAPI(
     title="PoisonGuard Runtime Monitoring API",
@@ -229,12 +233,59 @@ async def scan_dataset(files: list[UploadFile] = File(...)):
                 "error": "Invalid image file.",
             })
 
-    return {
-        "scanned_count": sum(r["status"] == "scanned" for r in results),
-        "error_count": sum(r["status"] == "error" for r in results),
+    scanned_count = sum(r["status"] == "scanned" for r in results)
+    error_count = sum(r["status"] == "error" for r in results)
+    scan_id = str(uuid.uuid4())
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    record = {
+        "scan_id": scan_id,
+        "timestamp": timestamp,
+        "scanned_count": scanned_count,
+        "error_count": error_count,
         "results": results,
+    }
+
+    DATASET_SCAN_HISTORY.parent.mkdir(parents=True, exist_ok=True)
+    history = []
+    if DATASET_SCAN_HISTORY.exists():
+        try:
+            loaded = json.loads(DATASET_SCAN_HISTORY.read_text())
+            if isinstance(loaded, list):
+                history = loaded
+        except (json.JSONDecodeError, OSError):
+            history = []
+
+    history.append(record)
+    history = history[-MAX_SAVED_DATASET_SCANS:]
+    DATASET_SCAN_HISTORY.write_text(json.dumps(history, indent=2))
+
+    return {
+        **record,
         "note": "This scans inference behaviour; it does not prove images are poisoned.",
     }
+
+
+@app.get("/scan/dataset/history")
+def get_dataset_scan_history():
+    if not DATASET_SCAN_HISTORY.exists():
+        return {"count": 0, "scans": []}
+
+    try:
+        history = json.loads(DATASET_SCAN_HISTORY.read_text())
+    except (json.JSONDecodeError, OSError):
+        raise HTTPException(
+            status_code=500,
+            detail="Dataset scan history could not be read.",
+        )
+
+    if not isinstance(history, list):
+        raise HTTPException(
+            status_code=500,
+            detail="Dataset scan history has an invalid format.",
+        )
+
+    return {"count": len(history), "scans": history}
 
 
 @app.post("/scan/model")
