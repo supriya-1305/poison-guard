@@ -6,6 +6,254 @@ from datetime import datetime
 import requests
 import streamlit as st
 
+
+# POISONGUARD_ANIMATION_PACK_V1
+st.markdown("""
+<style>
+@keyframes pgFadeSlideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* PG_WOW_ENHANCEMENT_V1 */
+@keyframes pgSoftGlow {
+  0%, 100% { box-shadow: 0 5px 12px rgba(50, 20, 25, 0.08); }
+  50% { box-shadow: 0 12px 28px rgba(200, 164, 93, 0.22); }
+}
+@keyframes pgIconSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Entrance motion */
+div[data-testid="stMetric"],
+div[data-testid="stPlotlyChart"],
+div[data-testid="stDataFrame"],
+div[data-testid="stTable"] {
+  animation: pgFadeSlideIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Metric cards: stronger hover feedback, no color changes */
+/* Metric cards: premium hover motion, existing colors preserved */
+div[data-testid="stMetric"] {
+    transition:
+        transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 320ms cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    transform: translateY(0);
+    position: relative;
+    z-index: 0;
+}
+
+div[data-testid="stMetric"]:hover {
+    transform: translateY(-6px) scale(1.015) !important;
+    box-shadow:
+        0 5px 10px rgba(0, 0, 0, 0.06),
+        0 14px 28px rgba(0, 0, 0, 0.13) !important;
+    z-index: 2;
+}
+
+/* Gentle premium glow on metric-card hover */
+div[data-testid="stMetric"]:hover {
+  animation: pgSoftGlow 2.4s ease-in-out infinite;
+}
+
+/* Buttons */
+div[data-testid="stButton"] button {
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+div[data-testid="stButton"] button:hover {
+  transform: translateY(-3px) !important;
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.18));
+}
+div[data-testid="stButton"] button:active {
+  transform: scale(0.97) !important;
+}
+div[data-testid="stButton"] button:hover svg {
+  animation: pgIconSpin 0.8s ease-in-out;
+}
+
+/* Native Streamlit table hover */
+div[data-testid="stTable"] tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+/* Expanders */
+div[data-testid="stExpander"] {
+  transition: filter 0.25s ease;
+}
+div[data-testid="stExpander"]:hover {
+  filter: drop-shadow(0 5px 9px rgba(200, 164, 93, 0.20));
+}
+
+/* Alerts enter gently; preserve their existing colors */
+div[data-testid="stAlert"] {
+  animation: pgFadeSlideIn 0.5s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* Premium 3D cards — existing theme preserved */
+div[data-testid="stMetric"],
+div[data-testid="stExpander"],
+div[data-testid="stDataFrame"],
+div[data-testid="stTable"] {
+    border-radius: 16px !important;
+    box-shadow:
+        0 2px 5px rgba(50, 20, 25, 0.08),
+        0 9px 22px rgba(50, 20, 25, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+    transition:
+        transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 280ms ease !important;
+}
+
+div[data-testid="stMetric"]:hover,
+div[data-testid="stExpander"]:hover {
+    transform: translateY(-5px) !important;
+    box-shadow:
+        0 5px 10px rgba(50, 20, 25, 0.08),
+        0 16px 30px rgba(50, 20, 25, 0.17),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+}
+
+div[data-testid="stButton"] button {
+    border-radius: 12px !important;
+    transition: transform 220ms ease, box-shadow 220ms ease !important;
+}
+
+div[data-testid="stButton"] button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 14px rgba(50, 20, 25, 0.16) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    div[data-testid="stMetric"],
+    div[data-testid="stExpander"],
+    div[data-testid="stButton"] button {
+        transition: none !important;
+    }
+}
+
+/* Week 8: premium card content alignment */
+div[data-testid="stMetric"] {
+    box-sizing: border-box !important;
+    padding: 14px 18px !important;
+    border-radius: 18px !important;
+}
+
+div[data-testid="stMetricLabel"],
+div[data-testid="stMetricValue"],
+div[data-testid="stMetricDelta"] {
+    text-align: left !important;
+    width: 100%;
+}
+
+div[data-testid="stExpander"] details > summary {
+    padding: 12px 18px !important;
+    box-sizing: border-box !important;
+}
+
+div[data-testid="stExpander"] details > div {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    box-sizing: border-box !important;
+}
+
+
+
+/* POISONGUARD_WOW_ANIMATIONS_V1 */
+
+/* Smooth entrance for dashboard cards and visualizations */
+@keyframes pgWowEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+div[data-testid="stMetric"],
+div[data-testid="stPlotlyChart"],
+div[data-testid="stDataFrame"],
+div[data-testid="stTable"] {
+    animation: pgWowEntrance 650ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+/* Staggered metric card entrance */
+div[data-testid="stMetric"]:nth-of-type(2) {
+    animation-delay: 70ms;
+}
+div[data-testid="stMetric"]:nth-of-type(3) {
+    animation-delay: 140ms;
+}
+div[data-testid="stMetric"]:nth-of-type(4) {
+    animation-delay: 210ms;
+}
+
+/* Refined 3D hover with existing theme colors */
+div[data-testid="stMetric"] {
+    border: 1px solid rgba(200, 164, 93, 0.45) !important;
+    box-shadow:
+        0 3px 6px rgba(45, 20, 24, 0.05),
+        0 8px 18px rgba(45, 20, 24, 0.07) !important;
+    transition:
+        transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 280ms ease,
+        border-color 280ms ease !important;
+}
+
+div[data-testid="stMetric"]:hover {
+    transform: translateY(-5px) scale(1.008) !important;
+    border-color: #C8A45D !important;
+    box-shadow:
+        0 7px 12px rgba(45, 20, 24, 0.08),
+        0 16px 30px rgba(45, 20, 24, 0.12),
+        0 0 0 1px rgba(200, 164, 93, 0.12) !important;
+    z-index: 3;
+}
+
+/* Smooth, polished expanders and buttons */
+div[data-testid="stExpander"] {
+    transition: box-shadow 250ms ease, transform 250ms ease !important;
+}
+div[data-testid="stExpander"]:hover {
+    box-shadow: 0 7px 18px rgba(45, 20, 24, 0.08) !important;
+}
+div[data-testid="stButton"] button {
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease,
+        filter 200ms ease !important;
+}
+div[data-testid="stButton"] button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 12px rgba(45, 20, 24, 0.12) !important;
+}
+
+/* Respect accessibility settings */
+@media (prefers-reduced-motion: reduce) {
+    div[data-testid="stMetric"],
+    div[data-testid="stPlotlyChart"],
+    div[data-testid="stDataFrame"],
+    div[data-testid="stTable"],
+    div[data-testid="stExpander"],
+    div[data-testid="stButton"] button {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 DEFAULT_API_URL = os.getenv("POISONGUARD_API_URL", "http://127.0.0.1:2222")
 
 
