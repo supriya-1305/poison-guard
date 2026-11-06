@@ -1,0 +1,24 @@
+Poisoning rate: 0%
+Device: mps
+Rate 0% | Epoch 1/2 | Loss 1.2092 | Accuracy 0.5632
+Rate 0% | Epoch 2/2 | Loss 0.7116 | Accuracy 0.7486
+
+EXPERIMENT COMPLETED
+{
+  "poisoning_rate_percent": 0,
+  "target_label": 0,
+  "trigger": "4x4 white square bottom-right",
+  "epochs": 2,
+  "training_samples": 50000,
+  "poisoned_samples": 0,
+  "test_samples": 10000,
+  "clean_accuracy": 0.7504,
+  "attack_success_rate": 0.014333333333333333,
+  "attack_successes": 129,
+  "attack_eligible_samples": 9000,
+  "training_time_seconds": 317.3557845410005,
+  "inference_latency_seconds_per_image": 0.0009875238834005358,
+  "device": "mps",
+  "checkpoint": "experiments/week9/models/resnet18_poison_0pct.pth"
+}
+Results saved: /Users/suprii/poison-guard/experiments/week9/results/poison_0pct.json

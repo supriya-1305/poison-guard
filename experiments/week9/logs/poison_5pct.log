@@ -1,0 +1,24 @@
+Poisoning rate: 5%
+Device: mps
+Rate 5% | Epoch 1/2 | Loss 1.1746 | Accuracy 0.5777
+Rate 5% | Epoch 2/2 | Loss 0.7005 | Accuracy 0.7519
+
+EXPERIMENT COMPLETED
+{
+  "poisoning_rate_percent": 5,
+  "target_label": 0,
+  "trigger": "4x4 white square bottom-right",
+  "epochs": 2,
+  "training_samples": 50000,
+  "poisoned_samples": 2500,
+  "test_samples": 10000,
+  "clean_accuracy": 0.7375,
+  "attack_success_rate": 0.9524444444444444,
+  "attack_successes": 8572,
+  "attack_eligible_samples": 9000,
+  "training_time_seconds": 335.6820077909997,
+  "inference_latency_seconds_per_image": 0.0010076350124000784,
+  "device": "mps",
+  "checkpoint": "experiments/week9/models/resnet18_poison_5pct.pth"
+}
+Results saved: /Users/suprii/poison-guard/experiments/week9/results/poison_5pct.json

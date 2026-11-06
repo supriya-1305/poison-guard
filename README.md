@@ -11,9 +11,9 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 8 Completed — Security Dashboard and Dataset Scan History**
+**Week 9 Completed — Poisoning Rate Experiments and Security Analysis**
 
-The dashboard integrates backend health, model status, runtime monitoring, incidents, registry versions, audit events, and saved dataset scan history. The existing automated test suite passes (15 tests). Model activation remains subject to manual authorization.
+Evaluated ResNet18 on CIFAR-10 at 0%, 1%, 3%, 5%, and 10% backdoor poisoning rates using an accelerated two-epoch configuration on Apple Silicon MPS. Generated five experiment result files, five model checkpoints, three comparison graphs, and the Week 9 report. All 15 regression tests passed. These experiments do not authorize model promotion or activation.
 
 ## Project Progress
 
@@ -27,7 +27,7 @@ The dashboard integrates backend health, model status, runtime monitoring, incid
 | Week 6 | ML Security Analysis and Optimization | Completed |
 | Week 7 | Backend/API Integration | Completed |
 | Week 8 | Security Dashboard and API Integration | Completed |
-| Week 9 | End-to-End Testing | Planned |
+| Week 9 | Poisoning Rate Experiments and Security Analysis | Completed |
 | Week 10 | Documentation and Final Demo | Planned |
 
 ## Week 1 — Foundation and Research
@@ -411,3 +411,61 @@ Integrate the PoisonGuard security dashboard with the existing backend API and d
 - The rule-based security score is preliminary and is not a validated security rating.
 - Candidate validation does not authorize model activation. Manual authorization and candidate-specific checks remain required.
 - Automated retraining and protected-model promotion/activation remain outside this Week 8 scope.
+
+
+## Week 9 — Poisoning Rate Experiments and Security Analysis
+
+### Objective
+
+Evaluate how different backdoor poisoning rates affect ResNet18 performance and attack success using CIFAR-10.
+
+### Experimental Configuration
+
+- Dataset: CIFAR-10
+- Model: ResNet18
+- Target class: 0 (airplane)
+- Trigger: 4x4 white square in the bottom-right corner
+- Poisoning rates: 0%, 1%, 3%, 5%, and 10%
+- Training duration: 2 epochs per experiment (accelerated evaluation)
+- Device: Apple Silicon MPS
+
+### Experimental Results
+
+| Poisoning Rate | Clean Accuracy | Attack Success Rate |
+|---:|---:|---:|
+| 0% | 75.04% | 1.43% |
+| 1% | 75.16% | 92.32% |
+| 3% | 72.57% | 93.22% |
+| 5% | 73.75% | 95.24% |
+| 10% | 73.49% | 97.44% |
+
+### Generated Artifacts
+
+- `experiments/week9/results/` — experiment result JSON files
+- `experiments/week9/models/` — trained model checkpoints
+- `experiments/week9/graphs/clean_accuracy_comparison.png`
+- `experiments/week9/graphs/attack_success_comparison.png`
+- `experiments/week9/graphs/week9_combined_comparison.png`
+- `experiments/week9/WEEK9_REPORT.md`
+- `experiments/week9/logs/` — experiment logs
+
+### Analysis
+
+Attack success increased substantially as the poisoning rate increased, while clean accuracy remained comparatively similar. This demonstrates why clean accuracy alone is insufficient to evaluate backdoor security.
+
+### Limitations
+
+- Each poisoning-rate experiment used 2 epochs for faster execution, not the original 10 epochs.
+- Results represent this experimental configuration and should not be treated as full-duration training results.
+- The baseline and poisoning experiments should be interpreted within their respective training configurations.
+
+### Safeguards
+
+- Week 9 experiments do not authorize model promotion or activation.
+- Existing Week 7 manual approval and model validation safeguards remain in effect.
+
+### Verification
+
+- All 5 experiment result files and model checkpoints verified.
+- All 3 comparison graphs and the Week 9 report verified.
+- Regression tests: 15 passed.

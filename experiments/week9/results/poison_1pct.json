@@ -1,0 +1,17 @@
+{
+  "poisoning_rate_percent": 1,
+  "target_label": 0,
+  "trigger": "4x4 white square bottom-right",
+  "epochs": 2,
+  "training_samples": 50000,
+  "poisoned_samples": 500,
+  "test_samples": 10000,
+  "clean_accuracy": 0.7516,
+  "attack_success_rate": 0.9232222222222223,
+  "attack_successes": 8309,
+  "attack_eligible_samples": 9000,
+  "training_time_seconds": 321.40914179100037,
+  "inference_latency_seconds_per_image": 0.0008614783588996033,
+  "device": "mps",
+  "checkpoint": "experiments/week9/models/resnet18_poison_1pct.pth"
+}

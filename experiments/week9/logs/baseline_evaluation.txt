@@ -1,0 +1,28 @@
+Device: mps
+Loading CIFAR-10 dataset...
+Test batches: 79
+
+Loading ResNet18 model...
+Model loaded successfully.
+
+Running inference...
+
+Baseline Metrics
+====================
+Accuracy: 0.8556
+Precision: 0.8646983332237255
+Recall: 0.8556000000000001
+F1: 0.8559351416323946
+Inference latency per image: 0.0006659243457000684 seconds
+
+Confusion Matrix:
+[[859  10  56  11  10   0   1  23  22   8]
+ [  6 914   1   7   1   0   1   5   5  60]
+ [ 22   0 832  32  40  11  13  43   2   5]
+ [  8   0  40 758  35  57  17  79   4   2]
+ [  2   1  31  16 872   3   6  68   1   0]
+ [  2   0  40 128  26 671   3 130   0   0]
+ [  6   0  63  51  16   5 838  18   2   1]
+ [  3   0   4   6   4   2   0 979   0   2]
+ [ 36  16   4   7   1   2   6   8 915   5]
+ [ 18  19   4  13   1   0   1  18   8 918]]
