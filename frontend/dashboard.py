@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -393,15 +394,56 @@ with st.sidebar:
         st.rerun()
     st.divider()
     st.markdown("### Navigation")
-    st.markdown(
-        "- Overview\n"
-        "- Dataset Security\n"
-        "- Model Security\n"
-        "- Runtime Monitoring\n"
-        "- Incidents\n"
-        "- Model Registry\n"
-        "- Audit Trail"
-    )
+    NAV_HTML = """
+    <style>
+    .pg-nav a {
+        display: block;
+        color: #A5A182;
+        text-decoration: none;
+        padding: 5px 3px;
+        border-radius: 5px;
+        font-size: 0.88rem;
+    }
+    .pg-nav a:hover {
+        color: #FFFFFF;
+        background: rgba(255,255,255,0.12);
+    }
+    .pg-nav .pg-sub {
+        padding-left: 18px;
+        font-size: 0.78rem;
+    }
+    html { scroll-behavior: smooth; }
+div[id="overview"],
+div[id="dataset-security"],
+div[id="model-security"],
+div[id="runtime-monitoring"],
+div[id="incidents"],
+div[id="model-registry"],
+div[id="audit-trail"],
+div[id="advanced-security"],
+div[id="explainable-ai"],
+div[id="model-integrity"],
+div[id="security-gate"] {
+    scroll-margin-top: 110px !important;
+}
+    </style>
+    <div class="pg-nav">
+    <a href="#overview">• Overview</a>
+    <a href="#dataset-security">• Dataset Security</a>
+    <a href="#model-security">• Model Security</a>
+    <a href="#runtime-monitoring">• Runtime Monitoring</a>
+    <a href="#incidents">• Incidents</a>
+    <a href="#model-registry">• Model Registry</a>
+    <a href="#audit-trail">• Audit Trail</a>
+    <a href="#advanced-security">• Advanced Security</a>
+    <a class="pg-sub" href="#explainable-ai">↳ Explainable AI (XAI)</a>
+    <a class="pg-sub" href="#model-integrity">↳ Model Integrity Verification</a>
+    <a class="pg-sub" href="#security-gate">↳ Automated Model Security Gate</a>
+    <a class="pg-sub" href="#attack-simulation">↳ Attack Simulation Lab</a>
+    <a class="pg-sub" href="#mitre-atlas">↳ MITRE ATLAS Threat Mapping</a>
+    </div>
+    """
+    st.markdown("\n".join(line.lstrip() for line in NAV_HTML.splitlines()), unsafe_allow_html=True)
     st.divider()
     st.caption(
         "Read-only monitoring. Model promotion, activation, "
@@ -414,6 +456,22 @@ def fetch_api(api_url, path):
         response = requests.get(
             f"{api_url.rstrip('/')}{path}",
             timeout=5,
+        )
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+    except ValueError:
+        return None, "The API returned invalid JSON."
+
+
+def post_api(api_url, path, payload):
+    """Send JSON data to the PoisonGuard backend."""
+    try:
+        response = requests.post(
+            f"{api_url.rstrip('/')}{path}",
+            json=payload,
+            timeout=15,
         )
         response.raise_for_status()
         return response.json(), None
@@ -473,6 +531,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown('<div id="overview"></div>', unsafe_allow_html=True)
 st.subheader("Overview")
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("API Health", "Online" if api_online else "Unavailable")
@@ -491,6 +550,7 @@ with st.expander("Backend connection details"):
         st.json(model)
 
 st.divider()
+st.markdown('<div id="dataset-security"></div>', unsafe_allow_html=True)
 st.header("Dataset Security")
 
 if dataset_history_error:
@@ -532,6 +592,7 @@ else:
     st.info("Dataset scan history is not available yet.")
 
 st.divider()
+st.markdown('<div id="model-security"></div>', unsafe_allow_html=True)
 st.header("Model Security")
 left, right = st.columns(2)
 
@@ -569,6 +630,7 @@ with right:
         )
 
 st.divider()
+st.markdown('<div id="runtime-monitoring"></div>', unsafe_allow_html=True)
 st.header("Runtime Monitoring")
 st.metric("Predictions logged", prediction_count)
 
@@ -582,6 +644,7 @@ else:
     st.info("Prediction activity data is unavailable.")
 
 st.divider()
+st.markdown('<div id="incidents"></div>', unsafe_allow_html=True)
 st.header("Incidents")
 if incidents_error:
     st.error(f"Incident endpoint unavailable: {incidents_error}")
@@ -610,6 +673,7 @@ else:
     st.info("Incident information is currently unavailable.")
 
 st.divider()
+st.markdown('<div id="model-registry"></div>', unsafe_allow_html=True)
 st.header("Model Registry")
 if registry_error:
     st.error(f"Registry endpoint unavailable: {registry_error}")
@@ -634,6 +698,7 @@ if registry_data:
         st.info("The registry currently returns no model versions.")
 
 st.divider()
+st.markdown('<div id="audit-trail"></div>', unsafe_allow_html=True)
 st.header("Audit Trail")
 if audit_error:
     st.error(f"Audit endpoint unavailable: {audit_error}")
@@ -700,6 +765,208 @@ if report_path.is_file():
         st.error(f"Could not read validation report: {exc}")
 else:
     st.info("The standard Week 7 validation report was not found.")
+
+
+st.divider()
+st.markdown('<div id="advanced-security"></div>', unsafe_allow_html=True)
+st.header("Advanced Security")
+st.caption("Explainability, checkpoint integrity and candidate security evaluation.")
+
+# 1. Explainable AI
+st.markdown('<div id="explainable-ai"></div>', unsafe_allow_html=True)
+st.subheader("1. Explainable AI (XAI)")
+with st.form("week10_xai_form"):
+    xai_sample = st.text_input("Sample ID", value="CIFAR10-SAMPLE-001")
+    xai_risk = st.number_input("Risk score (0–100)", min_value=0.0, max_value=100.0, value=85.0)
+    xai_signals = st.text_area(
+        "Detector signals (JSON)",
+        value='[{"name":"Activation Clustering","detected":true,"severity":"HIGH","evidence":"Sample belongs to a suspicious activation cluster."},{"name":"STRIP Detection","detected":true,"severity":"HIGH","evidence":"Prediction entropy indicates suspicious behavior."}]',
+        height=140,
+    )
+    xai_submit = st.form_submit_button("Generate Security Explanation")
+
+if xai_submit:
+    try:
+        signals = json.loads(xai_signals)
+        if not isinstance(signals, list) or not all(isinstance(x, dict) for x in signals):
+            raise ValueError("Detector signals must be a JSON list of objects.")
+        result, error = post_api(api_url, "/security/explain", {
+            "sample_id": xai_sample,
+            "risk_score": xai_risk,
+            "detector_signals": signals,
+        })
+        if error:
+            st.error(f"XAI request failed: {error}")
+        else:
+            st.success("Explanation generated.")
+            st.metric("Risk score", result.get("risk_score", "Unavailable"))
+            st.write("Recommendation:", result.get("recommendation"))
+            st.json(result)
+            st.info("Explanations are based on supplied detector evidence; no automatic action was taken.")
+    except (ValueError, TypeError) as exc:
+        st.error(f"Invalid detector signal JSON: {exc}")
+
+st.divider()
+
+# 2. Model integrity
+st.markdown('<div id="model-integrity"></div>', unsafe_allow_html=True)
+st.subheader("2. Model Integrity Verification")
+default_model_path = "week7/resnet18_sanitized_candidate.pth"
+model_path_input = st.text_input("Model path relative to models/", value=default_model_path, key="week10_integrity_path")
+
+models_root = (Path(__file__).resolve().parents[1] / "models").resolve()
+selected_model = (models_root / model_path_input).resolve()
+
+actual_hash = None
+if selected_model.is_relative_to(models_root) and selected_model.is_file():
+    try:
+        digest = hashlib.sha256()
+        with selected_model.open("rb") as model_file:
+            for chunk in iter(lambda: model_file.read(1024 * 1024), b""):
+                digest.update(chunk)
+        actual_hash = digest.hexdigest()
+        st.caption("Current checkpoint SHA-256 (reference value only):")
+        st.code(actual_hash)
+    except OSError as exc:
+        st.error(f"Could not read model checkpoint: {exc}")
+else:
+    st.warning("Model file not found. Check the path under models/.")
+
+expected_hash = st.text_input(
+    "Trusted expected SHA-256 hash",
+    key="week10_expected_hash",
+    help="Paste a hash obtained independently from a trusted manifest or previously verified record. Do not blindly trust the current hash displayed above.",
+)
+
+if st.button("Verify Model Integrity", key="week10_verify_integrity"):
+    if not actual_hash:
+        st.error("A valid model file is required.")
+    elif len(expected_hash.strip()) != 64:
+        st.error("Enter a trusted SHA-256 hash containing exactly 64 hexadecimal characters.")
+    else:
+        result, error = post_api(api_url, "/security/verify-integrity", {
+            "model_path": model_path_input,
+            "expected_sha256": expected_hash.strip(),
+        })
+        if error:
+            st.error(f"Integrity request failed: {error}")
+        else:
+            status = result.get("integrity_status", "UNKNOWN")
+            if status == "VERIFIED":
+                st.success("Model integrity VERIFIED.")
+            else:
+                st.error(f"Model integrity status: {status}")
+            st.json(result)
+
+st.divider()
+
+# 3. Automated security gate
+st.markdown('<div id="security-gate"></div>', unsafe_allow_html=True)
+st.subheader("3. Automated Model Security Gate")
+st.write("Evaluate the sanitized candidate against the Week 7 security criteria.")
+
+if st.button("Run Model Security Gate", key="week10_run_gate"):
+    if not expected_hash.strip():
+        st.warning("Enter the independently trusted SHA-256 hash above first.")
+    elif len(expected_hash.strip()) != 64:
+        st.error("The trusted SHA-256 hash must contain exactly 64 characters.")
+    else:
+        result, error = post_api(api_url, "/security/gate", {
+            "model_path": model_path_input,
+            "expected_sha256": expected_hash.strip(),
+        })
+        if error:
+            st.error(f"Security gate request failed: {error}")
+        else:
+            decision = result.get("decision", "UNKNOWN")
+            if decision == "PASS_PENDING_MANUAL_REVIEW":
+                st.success(f"Security gate: {decision}")
+            elif decision == "REJECT":
+                st.error("Security gate: REJECT")
+            else:
+                st.warning(f"Security gate: {decision}")
+            a, b = st.columns(2)
+            a.metric("Checks passed", result.get("checks_passed", 0))
+            b.metric("Total checks", result.get("checks_total", 0))
+            st.write("Reason:", result.get("reason"))
+            st.json(result)
+            st.warning(
+                "Manual approval is mandatory. This security gate does not promote, "
+                "activate or replace any model."
+            )
+
+
+st.divider()
+
+# 4. Controlled Attack Simulation
+st.markdown('<div id="attack-simulation"></div>', unsafe_allow_html=True)
+st.subheader("4. Controlled Attack Simulation Lab")
+st.write("Run predefined, non-destructive security scenarios.")
+
+scenario_labels = {
+    "checkpoint_tampering": "Checkpoint Tampering",
+    "high_risk_sample": "High-Risk Sample",
+    "candidate_gate_failure": "Candidate Security Gate Failure",
+}
+
+selected_scenario = st.selectbox(
+    "Select attack scenario",
+    list(scenario_labels),
+    format_func=lambda value: scenario_labels[value],
+    key="week10_attack_scenario",
+)
+
+if st.button("Run Controlled Simulation", key="week10_run_simulation"):
+    result, error = post_api(
+        api_url,
+        "/security/attack-simulation",
+        {"scenario": selected_scenario},
+    )
+    if error:
+        st.error(f"Simulation failed: {error}")
+    else:
+        st.success("Controlled simulation completed.")
+        st.metric("Decision", result.get("decision", "Unavailable"))
+        st.write("Recommended action:", result.get("recommended_action", "Not specified"))
+        st.json(result)
+        st.warning(
+            "Simulation only: no model files were modified, "
+            "no model was promoted, and no activation was authorized."
+        )
+
+st.divider()
+
+# 5. MITRE ATLAS Threat Mapping
+st.markdown('<div id="mitre-atlas"></div>', unsafe_allow_html=True)
+st.subheader("5. MITRE ATLAS Threat Mapping")
+st.write(
+    "Review selected AI attack techniques and the existing PoisonGuard "
+    "controls associated with each technique."
+)
+
+atlas_data, atlas_error = fetch_api(api_url, "/security/atlas")
+
+if atlas_error:
+    st.error(f"Could not load MITRE ATLAS mappings: {atlas_error}")
+elif atlas_data:
+    st.metric("Mapped techniques", atlas_data.get("mapping_count", 0))
+
+    for mapping in atlas_data.get("mappings", []):
+        with st.expander(
+            f'{mapping.get("technique_id", "Unknown")} — '
+            f'{mapping.get("technique", "Unnamed technique")}'
+        ):
+            st.write(mapping.get("description", ""))
+            st.write("Project relevance:", mapping.get("project_relevance", ""))
+            st.write("Existing controls:")
+            for control in mapping.get("existing_controls", []):
+                st.write(f"- {control}")
+            st.write("Coverage:", mapping.get("coverage", "Not specified"))
+
+    st.caption(
+        "ATLAS mappings are informational. Partial coverage does not mean "
+        "that every related attack is detected or prevented."
+    )
 
 st.caption(
     "PoisonGuard prototype · Live API data is separated from local validation reports. "

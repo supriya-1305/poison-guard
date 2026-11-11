@@ -15,6 +15,8 @@ from torchvision import transforms
 
 from ml.models.resnet18 import create_model
 from backend.app.services import runtime_monitor
+from backend.app.services.security_gate.gate import evaluate_security_gate
+from backend.app.services.security_api import router as week10_security_router
 
 from backend.app.services.week7_orchestrator import (
     process_runtime_alerts,
@@ -34,6 +36,46 @@ app = FastAPI(
     ),
     version="0.1.0",
 )
+
+app.include_router(week10_security_router)
+
+
+@app.post("/security/gate")
+def run_security_gate(payload: dict):
+    import json
+
+    from backend.app.services.security_api import MODELS_ROOT
+
+    candidate_file = ROOT / "experiments/week7/results/sanitized_candidate_evaluation.json"
+    vulnerable_file = ROOT / "experiments/week7/results/vulnerable_model_evaluation.json"
+
+    if not candidate_file.is_file() or not vulnerable_file.is_file():
+        raise HTTPException(404, "Required evaluation reports are missing.")
+
+    model_path = payload.get("model_path")
+    expected_hash = payload.get("expected_sha256")
+
+    if not isinstance(model_path, str) or not isinstance(expected_hash, str):
+        raise HTTPException(422, "model_path and expected_sha256 are required.")
+
+    candidate_path = (MODELS_ROOT / model_path).resolve()
+
+    if not candidate_path.is_relative_to(MODELS_ROOT):
+        raise HTTPException(400, "Model path must remain inside models/.")
+
+    from backend.app.services.provenance.integrity import verify_sha256
+
+    try:
+        integrity = verify_sha256(candidate_path, expected_hash)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+    candidate = json.loads(candidate_file.read_text(encoding="utf-8"))
+    vulnerable = json.loads(vulnerable_file.read_text(encoding="utf-8"))
+
+    return evaluate_security_gate(candidate, vulnerable, integrity)
 
 CLASS_NAMES = [
     "airplane", "automobile", "bird", "cat", "deer",
@@ -601,3 +643,20 @@ def week7_audit():
         "events": records,
     }
 
+@app.post("/security/attack-simulation")
+def run_attack_simulation(payload: dict):
+    """Run a controlled, non-destructive Week 10 security simulation."""
+    from backend.app.services.attack_simulation import simulate_attack
+
+    scenario = payload.get("scenario")
+    try:
+        return simulate_attack(scenario)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+@app.get("/security/atlas")
+def get_security_atlas():
+    """Return informational MITRE ATLAS threat mappings."""
+    from backend.app.services.threat_intelligence import get_atlas_mappings
+
+    return get_atlas_mappings()
