@@ -11,9 +11,9 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 9 Completed — Poisoning Rate Experiments and Security Analysis**
+**Week 10 Advanced Security — Implementation and Integration Completed; Final Documentation and Submission in Progress**
 
-Evaluated ResNet18 on CIFAR-10 at 0%, 1%, 3%, 5%, and 10% backdoor poisoning rates using an accelerated two-epoch configuration on Apple Silicon MPS. Generated five experiment result files, five model checkpoints, three comparison graphs, and the Week 9 report. All 15 regression tests passed. These experiments do not authorize model promotion or activation.
+Implemented Explainable AI (XAI), SHA-256 model integrity verification, an automated model security gate, controlled attack simulations, and MITRE ATLAS threat mapping. Integrated all five security features into the Advanced Security dashboard with clickable sidebar navigation. The complete project test suite passed 44 tests. Model promotion and activation remain subject to existing manual authorization safeguards.
 
 ## Project Progress
 
@@ -28,7 +28,7 @@ Evaluated ResNet18 on CIFAR-10 at 0%, 1%, 3%, 5%, and 10% backdoor poisoning rat
 | Week 7 | Backend/API Integration | Completed |
 | Week 8 | Security Dashboard and API Integration | Completed |
 | Week 9 | Poisoning Rate Experiments and Security Analysis | Completed |
-| Week 10 | Documentation and Final Demo | Planned |
+| Week 10 | Advanced Security Enhancements and Dashboard Integration | Implementation Completed; Final Submission Pending |
 
 ## Week 1 — Foundation and Research
 
@@ -469,3 +469,111 @@ Attack success increased substantially as the poisoning rate increased, while cl
 - All 5 experiment result files and model checkpoints verified.
 - All 3 comparison graphs and the Week 9 report verified.
 - Regression tests: 15 passed.
+
+
+## Week 10 — Advanced Security Enhancements
+
+### Objective
+
+Extend PoisonGuard with explainability, model integrity verification, security-gate evaluation, controlled attack simulation, and MITRE ATLAS threat mapping.
+
+### 1. Explainable AI (XAI)
+
+- Generates rule-based explanations from supplied detector evidence.
+- Displays sample ID and risk score.
+- Reports detected security signals and evidence.
+- Provides recommendations based on risk score.
+- Does not perform automatic quarantine or other security actions.
+
+**Limitation:** This implementation uses supplied detector evidence and rule-based recommendations. It is not SHAP/LIME feature attribution.
+
+### 2. Model Integrity Verification
+
+- Uses SHA-256 hashing to verify model checkpoint integrity.
+- Compares the checkpoint against an independently trusted expected hash.
+- Identifies modified or mismatched model files.
+- Restricts model paths to the project models directory.
+
+**Limitation:** A hash calculated from the same file at verification time is not an independent trusted reference.
+
+### 3. Automated Model Security Gate
+
+- Evaluates candidate clean accuracy.
+- Evaluates candidate attack success rate.
+- Checks vulnerable-model attack success rate.
+- Checks evaluation completion and matching sample counts.
+- Incorporates model integrity verification.
+- Returns PASS_PENDING_MANUAL_REVIEW, REJECT, or MANUAL_REVIEW decisions.
+
+The gate does not automatically promote, activate, or replace a model. Manual approval remains mandatory.
+
+### 4. Controlled Attack Simulation Lab
+
+Implemented three non-destructive scenarios:
+
+- `checkpoint_tampering` — simulated model-integrity failure.
+- `high_risk_sample` — simulated high-risk detector alert.
+- `candidate_gate_failure` — simulated candidate security-gate failure.
+
+The simulations do not modify actual model checkpoints or authorize model activation.
+
+### 5. MITRE ATLAS Threat Mapping
+
+Mapped four selected techniques:
+
+| Technique ID | Technique |
+|---|---|
+| AML.T0020 | Training Data Poisoning |
+| AML.T0018 | Manipulate AI Model |
+| AML.T0015 | Evade AI Model |
+| AML.T0115 | Publish Poisoned AI Artifacts |
+
+Coverage is documented as PARTIAL. The mappings describe related defensive controls and do not prove detection of every attack variant.
+
+Reference: https://atlas.mitre.org/
+
+### 6. Advanced Security Dashboard
+
+Integrated five security panels:
+
+1. Explainable AI (XAI)
+2. Model Integrity Verification
+3. Automated Model Security Gate
+4. Attack Simulation Lab
+5. MITRE ATLAS Threat Mapping
+
+Added clickable sidebar navigation links that jump to the corresponding dashboard sections.
+
+### 7. Backend API Endpoints
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/security/explain` | POST | Generate security explanation |
+| `/security/verify-integrity` | POST | Verify checkpoint SHA-256 |
+| `/security/gate` | POST | Evaluate candidate security gate |
+| `/security/attack-simulation` | POST | Run controlled simulation |
+| `/security/atlas` | GET | Retrieve MITRE ATLAS mappings |
+
+### 8. Verification
+
+- Backend and dashboard Python syntax checks passed.
+- Attack Simulation tests: 9 passed.
+- MITRE ATLAS mapping tests: 6 passed.
+- Full project regression suite: 44 passed.
+- Dashboard feature panels and navigation manually inspected.
+- Attack simulation API response verified.
+- MITRE ATLAS API returned four mappings.
+
+### 9. Safeguards and Limitations
+
+- No automatic model promotion or activation.
+- Manual approval remains mandatory.
+- Attack simulations are non-destructive.
+- Integrity verification requires an independently trusted hash.
+- XAI explanations are rule-based.
+- MITRE ATLAS coverage remains partial.
+- The Week 9 experiment results retain their documented two-epoch limitation.
+
+### 10. Completion Status
+
+Core Week 10 implementation, integration, and testing are completed. Final supporting documentation, submission screenshots, and GitHub publication remain pending.
