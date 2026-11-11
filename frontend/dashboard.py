@@ -439,6 +439,8 @@ div[id="security-gate"] {
     <a class="pg-sub" href="#explainable-ai">↳ Explainable AI (XAI)</a>
     <a class="pg-sub" href="#model-integrity">↳ Model Integrity Verification</a>
     <a class="pg-sub" href="#security-gate">↳ Automated Model Security Gate</a>
+    <a class="pg-sub" href="#attack-simulation">↳ Attack Simulation Lab</a>
+    <a class="pg-sub" href="#mitre-atlas">↳ MITRE ATLAS Threat Mapping</a>
     </div>
     """
     st.markdown("\n".join(line.lstrip() for line in NAV_HTML.splitlines()), unsafe_allow_html=True)
@@ -892,6 +894,79 @@ if st.button("Run Model Security Gate", key="week10_run_gate"):
                 "Manual approval is mandatory. This security gate does not promote, "
                 "activate or replace any model."
             )
+
+
+st.divider()
+
+# 4. Controlled Attack Simulation
+st.markdown('<div id="attack-simulation"></div>', unsafe_allow_html=True)
+st.subheader("4. Controlled Attack Simulation Lab")
+st.write("Run predefined, non-destructive security scenarios.")
+
+scenario_labels = {
+    "checkpoint_tampering": "Checkpoint Tampering",
+    "high_risk_sample": "High-Risk Sample",
+    "candidate_gate_failure": "Candidate Security Gate Failure",
+}
+
+selected_scenario = st.selectbox(
+    "Select attack scenario",
+    list(scenario_labels),
+    format_func=lambda value: scenario_labels[value],
+    key="week10_attack_scenario",
+)
+
+if st.button("Run Controlled Simulation", key="week10_run_simulation"):
+    result, error = post_api(
+        api_url,
+        "/security/attack-simulation",
+        {"scenario": selected_scenario},
+    )
+    if error:
+        st.error(f"Simulation failed: {error}")
+    else:
+        st.success("Controlled simulation completed.")
+        st.metric("Decision", result.get("decision", "Unavailable"))
+        st.write("Recommended action:", result.get("recommended_action", "Not specified"))
+        st.json(result)
+        st.warning(
+            "Simulation only: no model files were modified, "
+            "no model was promoted, and no activation was authorized."
+        )
+
+st.divider()
+
+# 5. MITRE ATLAS Threat Mapping
+st.markdown('<div id="mitre-atlas"></div>', unsafe_allow_html=True)
+st.subheader("5. MITRE ATLAS Threat Mapping")
+st.write(
+    "Review selected AI attack techniques and the existing PoisonGuard "
+    "controls associated with each technique."
+)
+
+atlas_data, atlas_error = fetch_api(api_url, "/security/atlas")
+
+if atlas_error:
+    st.error(f"Could not load MITRE ATLAS mappings: {atlas_error}")
+elif atlas_data:
+    st.metric("Mapped techniques", atlas_data.get("mapping_count", 0))
+
+    for mapping in atlas_data.get("mappings", []):
+        with st.expander(
+            f'{mapping.get("technique_id", "Unknown")} — '
+            f'{mapping.get("technique", "Unnamed technique")}'
+        ):
+            st.write(mapping.get("description", ""))
+            st.write("Project relevance:", mapping.get("project_relevance", ""))
+            st.write("Existing controls:")
+            for control in mapping.get("existing_controls", []):
+                st.write(f"- {control}")
+            st.write("Coverage:", mapping.get("coverage", "Not specified"))
+
+    st.caption(
+        "ATLAS mappings are informational. Partial coverage does not mean "
+        "that every related attack is detected or prevented."
+    )
 
 st.caption(
     "PoisonGuard prototype · Live API data is separated from local validation reports. "

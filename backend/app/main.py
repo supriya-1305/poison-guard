@@ -643,3 +643,20 @@ def week7_audit():
         "events": records,
     }
 
+@app.post("/security/attack-simulation")
+def run_attack_simulation(payload: dict):
+    """Run a controlled, non-destructive Week 10 security simulation."""
+    from backend.app.services.attack_simulation import simulate_attack
+
+    scenario = payload.get("scenario")
+    try:
+        return simulate_attack(scenario)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+@app.get("/security/atlas")
+def get_security_atlas():
+    """Return informational MITRE ATLAS threat mappings."""
+    from backend.app.services.threat_intelligence import get_atlas_mappings
+
+    return get_atlas_mappings()
