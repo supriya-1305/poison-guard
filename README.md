@@ -1,14 +1,3 @@
-## Week 11 – Security Assessment
-
-- Rule-based model security scoring and risk classification
-- Accuracy, ASR, and integrity evaluation
-- Strict input validation
-- Assessment API and audit history
-- JSON security report endpoint
-- Unit and API testing
-
-Week 11 report: `docs/enhancements/WEEK11_SECURITY_ASSESSMENT.md`
-
 # PoisonGuard
 
 **Automated Framework for Detecting and Preventing Data Poisoning and Backdoor Attacks in Machine Learning Models**
