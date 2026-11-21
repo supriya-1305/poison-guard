@@ -579,3 +579,12 @@ Added clickable sidebar navigation links that jump to the corresponding dashboar
 ### 10. Completion Status
 
 Core Week 10 implementation, integration, testing, documentation, and feature-branch publication to GitHub are completed. Final dashboard screenshots and merging the Week 10 branch into main remain pending.
+
+---
+
+## Week 11 – Security Assessment Center
+
+Implemented a rule-based security assessment system with security scoring, risk classification, accuracy/ASR evaluation, model integrity checks, strict validation, assessment history, and JSON report generation. Added backend APIs and automated unit/API tests. Full regression suite passed: **63 tests**.
+
+**Safety:** Model promotion and activation remain manual and require authorization.
+
