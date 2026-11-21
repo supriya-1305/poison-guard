@@ -1,3 +1,14 @@
+## Week 11 – Security Assessment
+
+- Rule-based model security scoring and risk classification
+- Accuracy, ASR, and integrity evaluation
+- Strict input validation
+- Assessment API and audit history
+- JSON security report endpoint
+- Unit and API testing
+
+Week 11 report: `docs/enhancements/WEEK11_SECURITY_ASSESSMENT.md`
+
 # PoisonGuard
 
 **Automated Framework for Detecting and Preventing Data Poisoning and Backdoor Attacks in Machine Learning Models**
@@ -11,7 +22,7 @@ The project focuses on protecting ML training pipelines against data poisoning a
 ## Current Phase
 
 
-**Week 10 Completed — Advanced Security Enhancements and Dashboard Integration**
+**Week 11 Completed — Security Assessment Center**
 
 Implemented Explainable AI (XAI), SHA-256 model integrity verification, an automated model security gate, controlled attack simulations, and MITRE ATLAS threat mapping. Integrated all five security features into the Advanced Security dashboard with clickable sidebar navigation. The complete project test suite passed 44 tests. Model promotion and activation remain subject to existing manual authorization safeguards.
 
