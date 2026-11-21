@@ -29,7 +29,8 @@ Implemented Explainable AI (XAI), SHA-256 model integrity verification, an autom
 | Week 8 | Security Dashboard and API Integration | Completed |
 | Week 9 | Poisoning Rate Experiments and Security Analysis | Completed |
 | Week 10 | Advanced Security Enhancements and Dashboard Integration | Completed |
-| Week 11 | Documentation and Final Demo | Planned |
+| Week 11 | Security Assessment Center | Completed |
+| Week 12 | Final Documentation, Demonstration and Project Completion | Planned |
 
 ## Week 1 — Foundation and Research
 
@@ -578,3 +579,12 @@ Added clickable sidebar navigation links that jump to the corresponding dashboar
 ### 10. Completion Status
 
 Core Week 10 implementation, integration, testing, documentation, and feature-branch publication to GitHub are completed. Final dashboard screenshots and merging the Week 10 branch into main remain pending.
+
+---
+
+## Week 11 – Security Assessment Center
+
+Implemented a rule-based security assessment system with security scoring, risk classification, accuracy/ASR evaluation, model integrity checks, strict validation, assessment history, and JSON report generation. Added backend APIs and automated unit/API tests. Full regression suite passed: **63 tests**.
+
+**Safety:** Model promotion and activation remain manual and require authorization.
+
